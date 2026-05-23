@@ -1,0 +1,149 @@
+# Python
+*.py[cod]
+*$py.class
+*.so
+.Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+htmlcov/
+*.cover
+.hypothesis/
+
+# Virtual Environment
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+/media
+/staticfiles
+/static
+*.pot
+
+# Django Q
+db.sqlite3
+*.sqlite3
+
+# Secrets & Environment
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+secrets.json
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Distribution / packaging
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# AI/ML Models & Data
+*.model
+*.h5
+*.pkl
+*.joblib
+*.ckpt
+*.pth
+*.pt
+/models/
+/checkpoints/
+
+# LanceDB & Vector Databases
+lancedb/
+*.lance
+/vectordb/
+
+# Docling & OCR temporary files
+/temp_docs/
+/extracted_text/
+
+# Uploads & Media
+uploads/
+documentos/
+temp/
+
+# Logs
+*.log
+logs/
+*.log.*
+
+# Cache
+.cache/
+*.cache
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Testing
+.tox/
+.nox/
+.coverage
+.coverage.*
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre
+.pyre/
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# Backup files
+*.bak
+*.swp
+*.swo
+*~
+
+# Node (caso use frontend)
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+client_secret_*.json
