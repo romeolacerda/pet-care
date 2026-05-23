@@ -28,3 +28,18 @@ class Cliente(models.Model):
 
     def __str__(self):
         return self.nome
+
+class Consulta(models.Model):
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
+    data = models.DateTimeField(auto_now_add=True)
+    observacao = models.TextField(null=True, blank=True)
+    video = models.FileField(upload_to='videos/', null=True, blank=True)
+    pdf = models.FileField(upload_to='pdfs/', null=True, blank=True)
+    transcricao = models.TextField(null=True, blank=True)
+    segmentos = models.JSONField(null=True, blank=True)
+    ocr_pdf = models.TextField(null=True, blank=True)
+    analise_exames = models.JSONField(null=True, blank=True)
+    resumo = models.TextField(null=True, blank=True)
+    
+    def __str__(self):
+        return self.cliente.nome

@@ -2,7 +2,10 @@ from django.shortcuts import render, redirect
 from django.contrib.messages import constants
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
 
+from .models import Consulta
 from usuarios.models import Cliente
 
 def cadastro(request):
@@ -85,7 +88,69 @@ def clientes(request):
         messages.add_message(request, constants.ERROR, 'Erro ao cadastrar cliente.')
         return redirect('clientes')
  
-def clientes(request):
+def paciente(request, pk):
     if request.method == 'GET':
-        clientes = Cliente.objects.all()
-        return render(request, 'clientes.html', {'clientes': clientes})
+        cliente = get_object_or_404(Cliente, pk=pk)
+        consultas = Consulta.objects.filter(cliente=cliente)
+        return render(request, 'paciente.html', {'cliente': cliente, 'consultas': consultas})
+    elif request.method == 'POST':
+        observacao = request.POST.get('observacao')
+        video = request.FILES.get('video')
+        exames = request.FILES.get('exames')
+
+        cliente = get_object_or_404(Cliente, pk=pk)
+        consulta = Consulta(cliente=cliente, observacao=observacao, video=video, pdf=exames)
+        consulta.save()
+
+        return redirect('paciente', pk)
+
+def consulta(request, pk):
+    consulta_obj = get_object_or_404(Consulta.objects.select_related("cliente"), pk=pk)
+    return render(
+        request,
+        "consulta.html",
+        {
+            "consulta": consulta_obj,
+            "cliente": consulta_obj.cliente,
+        },
+    )
+
+@csrf_exempt
+def chat(request, pk):
+    cliente = get_object_or_404(Cliente, pk=pk)
+    if request.method == 'GET':
+        consultas = Consulta.objects.filter(cliente=cliente).order_by("-data")
+        ultima_consulta = consultas.first()
+        total_exames = consultas.filter(pdf__isnull=False).exclude(pdf="").count()
+        return render(
+            request,
+            "chat.html",
+            {
+                "cliente": cliente,
+                "ultima_consulta": ultima_consulta,
+                "total_consultas": consultas.count(),
+                "total_exames": total_exames,
+            },
+        )
+
+from .agent import TriagemAgent
+from agno.agent import RunOutput
+from django.http import JsonResponse
+
+def triagem(request, id_cliente):
+    frequencia_cardiaca = request.POST.get('frequencia_cardiaca')
+    frequencia_respiratoria = request.POST.get('frequencia_respiratoria')
+    temperatura = request.POST.get('temperatura')
+    peso = request.POST.get('peso')
+    queixa = request.POST.get('queixa')
+    observacao = request.POST.get('observacao')
+
+    cliente = get_object_or_404(Cliente, id=id_cliente)
+    agent = TriagemAgent.build_agent()
+    prompt = TriagemAgent.mount_prompt(frequencia_cardiaca, frequencia_respiratoria, temperatura, peso, queixa, observacao)
+
+    response: RunOutput = agent.run(prompt)
+    result = response.content.cor
+    cliente.triagem = result
+    cliente.save()
+    return redirect('paciente', id_cliente)

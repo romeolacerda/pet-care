@@ -134,3 +134,6 @@ MESSAGE_TAGS = {
     constants.SUCCESS: 'bg-green-50 text-green-700',
     constants.ERROR: 'bg-red-50 text-red-700'
 }
+
+from decouple import config
+OPENAI_API_KEY = config('OPENAI_API_KEY')

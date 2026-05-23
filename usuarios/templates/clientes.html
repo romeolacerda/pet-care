@@ -82,7 +82,7 @@
                     </svg>
                   </div>
                   <div>
-                    <a href="#" class="pn">{{ cliente.nome_animal }}</a>
+                    <a href="{% url 'paciente' cliente.id %}" class="pn">{{ cliente.nome_animal }}</a>
                     <div class="pm">{{ cliente.get_especie_display }}</div>
                   </div>
                 </div>
