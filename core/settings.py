@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'usuarios'
+    'usuarios',
+    'django-q'
 ]
 
 MIDDLEWARE = [
@@ -137,3 +138,12 @@ MESSAGE_TAGS = {
 
 from decouple import config
 OPENAI_API_KEY = config('OPENAI_API_KEY')
+
+Q_CLUSTER = {
+    "name": "pythonando",
+    "workers": 1,
+    "retry": 200,        
+    "timeout": 180,       
+    "queue_limit": 50,
+    "orm": "default",
+}
