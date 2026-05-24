@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import Consulta, Pergunta
+from .models import Consulta, ContextRag, Pergunta
 from usuarios.models import Cliente
 
 def cadastro(request):
@@ -181,6 +181,10 @@ def stream_resposta(request):
             if chunk.event == RunEvent.run_content:
                 if chunk.content:
                     yield str(chunk.content)
+
+            if chunk.event == RunEvent.tool_call_completed:
+                context = ContextRag(content=chunk.tool.result, tool_name=chunk.tool.tool_name, tool_args=chunk.tool.tool_args, pergunta=pergunta)
+                context.save()
             
     response = StreamingHttpResponse(
         gerar_resposta(),
@@ -190,3 +194,17 @@ def stream_resposta(request):
     response['X-Accel-Buffering'] = 'no'
     
     return response
+
+def fontes(request, pk):
+    pergunta = get_object_or_404(Pergunta.objects.select_related("cliente"), pk=pk)
+    contextos = ContextRag.objects.filter(pergunta=pergunta).order_by("id")
+    return render(
+        request,
+        "fontes.html",
+        {
+            "pergunta": pergunta,
+            "cliente": pergunta.cliente,
+            "contextos": contextos,
+            "total_fontes": contextos.count(),
+        },
+    )
