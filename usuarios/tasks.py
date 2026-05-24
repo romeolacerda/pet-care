@@ -33,7 +33,7 @@ def ocr_and_markdown_file(id_consulta):
     consulta.save()
     return 'Ok'
 
-from .agent import SummaryAgent, ExamAnalysisAgent
+from .agent import AssistantAgent, SummaryAgent, ExamAnalysisAgent
 def summary_and_exam_analysis(id_consulta):
     consulta = get_object_or_404(Consulta, id=id_consulta)
     summary_agent = SummaryAgent()
@@ -44,3 +44,24 @@ def summary_and_exam_analysis(id_consulta):
     consulta.analise_exames = analise_exames.analyses
     consulta.save()
     return 'Ok'
+
+def rag_documentos(id_consulta):
+    consulta = get_object_or_404(Consulta, id=id_consulta)
+    AssistantAgent.knowledge.insert(
+        name=consulta.video.name,
+        text_content=consulta.transcricao,
+        metadata={
+            "paciente_id": consulta.cliente.id,
+            "name": consulta.video.name,
+            "tipo": "video",
+        },
+    )
+ 
+    AssistantAgent.knowledge.insert(
+        name=consulta.pdf.name,
+        text_content=consulta.ocr_pdf,
+        metadata={
+            "paciente_id": consulta.cliente.id,
+            "name": consulta.pdf.name,
+        },
+    )

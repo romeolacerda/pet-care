@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import Consulta
+from .models import Consulta, Pergunta
 from usuarios.models import Cliente
 
 def cadastro(request):
@@ -132,6 +132,11 @@ def chat(request, pk):
                 "total_exames": total_exames,
             },
         )
+    elif request.method == 'POST':
+        pergunta = request.POST.get('pergunta')
+        pergunta_model = Pergunta(pergunta=pergunta, cliente=cliente)
+        pergunta_model.save()
+        return JsonResponse({'id': pergunta_model.id})
 
 from .agent import TriagemAgent
 from agno.agent import RunOutput
@@ -154,3 +159,34 @@ def triagem(request, id_cliente):
     cliente.triagem = result
     cliente.save()
     return redirect('paciente', id_cliente)
+
+from .models import Pergunta
+from agno.agent import RunOutputEvent, RunEvent
+from typing import Iterator
+from django.http import StreamingHttpResponse
+from .agent import AssistantAgent
+
+@csrf_exempt
+def stream_resposta(request):
+    id_pergunta = request.POST.get('id_pergunta')
+
+    pergunta = get_object_or_404(Pergunta, id=id_pergunta)
+
+    def gerar_resposta():
+        
+        agent = AssistantAgent.build_agent(knowledge_filters={'paciente_id': pergunta.cliente.id}, session_id=pergunta.cliente.id)
+        
+        stream: Iterator[RunOutputEvent] = agent.run(pergunta.pergunta, stream=True, stream_events=True)
+        for chunk in stream:
+            if chunk.event == RunEvent.run_content:
+                if chunk.content:
+                    yield str(chunk.content)
+            
+    response = StreamingHttpResponse(
+        gerar_resposta(),
+        content_type='text/plain; charset=utf-8'
+    )
+    response['Cache-Control'] = 'no-cache'
+    response['X-Accel-Buffering'] = 'no'
+    
+    return response

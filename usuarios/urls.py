@@ -8,4 +8,5 @@ urlpatterns = [
     path('clientes/<int:pk>/', views.paciente, name='paciente'),
     path('consultas/<int:pk>/', views.consulta, name='consulta'),
     path('clientes/<int:pk>/chat/', views.chat, name='chat'),
+    path('chat/stream/', views.stream_resposta, name='stream_resposta'),
 ]
