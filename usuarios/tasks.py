@@ -1,26 +1,29 @@
 from openai import OpenAI
 from django.shortcuts import get_object_or_404
-from .models import  Consulta
+from .models import Consulta
 from django.conf import settings
+from .agent import SummaryAgent, ExamAnalysisAgent, AssistentAgent
+
 
 def transcribe_recording(id_consulta):
     consulta = get_object_or_404(Consulta, id=id_consulta)
     client = OpenAI(api_key=settings.OPENAI_API_KEY)
 
-    with open(consulta.video.path, "rb") as f: 
+    with open(consulta.video.path, "rb") as f:
         transcription = client.audio.transcriptions.create(
             model="whisper-1",
             file=f,
-            response_format="verbose_json", 
+            response_format="verbose_json",
             language="pt",
         )
 
     consulta.transcricao = transcription.text
     consulta.save()
-    return 'Ok'
+    return "Ok"
+
 
 def ocr_and_markdown_file(id_consulta):
-    print('teste4')
+    print("teste4")
     from docling.document_converter import DocumentConverter
 
     consulta = get_object_or_404(Consulta, id=id_consulta)
@@ -32,10 +35,10 @@ def ocr_and_markdown_file(id_consulta):
 
     consulta.ocr_pdf = texto
     consulta.save()
-    print('teste5')
-    return 'Ok'
+    print("teste5")
+    return "Ok"
 
-from .agent import SummaryAgent, ExamAnalysisAgent, AssistentAgent
+
 def summary_and_exam_analysis(id_consulta):
     consulta = get_object_or_404(Consulta, id=id_consulta)
 
@@ -47,7 +50,8 @@ def summary_and_exam_analysis(id_consulta):
 
     consulta.analise_exames = analise_exames.analyses
     consulta.save()
-    return 'Ok'
+    return "Ok"
+
 
 def rag_documentos(id_consulta):
     consulta = get_object_or_404(Consulta, id=id_consulta)
@@ -56,10 +60,10 @@ def rag_documentos(id_consulta):
         name=consulta.video.name,
         text_content=consulta.transcricao,
         metadata={
-            'paciente_id': consulta.cliente.id,
+            "paciente_id": consulta.cliente.id,
             "name": consulta.video.name,
             "tipo": "video",
-        }
+        },
     )
 
     AssistentAgent.knowledge.insert(

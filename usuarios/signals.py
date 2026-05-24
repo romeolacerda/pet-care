@@ -1,8 +1,14 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from .models import Consulta
-from .tasks import ocr_and_markdown_file, transcribe_recording, summary_and_exam_analysis, rag_documentos
+from .tasks import (
+    ocr_and_markdown_file,
+    transcribe_recording,
+    summary_and_exam_analysis,
+    rag_documentos,
+)
 from django_q.tasks import Chain
+
 
 @receiver(post_save, sender=Consulta)
 def signals_gravacoes_transcricao_resumos(sender, instance, created, **kwargs):
