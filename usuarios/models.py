@@ -1,6 +1,6 @@
+from email.policy import default
 from django.db import models
 
-# Create your models here.
 class Cliente(models.Model):
     especie_choices = [
         ('C', 'Cachorro'),
@@ -16,6 +16,7 @@ class Cliente(models.Model):
         ('laranja', 'Laranja'),
         ('vermelho', 'Vermelho'),
     ]
+
     nome = models.CharField(max_length=100)
     cpf = models.CharField(max_length=14, null=True, blank=True)
     telefone = models.CharField(max_length=15, null=True, blank=True)
@@ -40,7 +41,7 @@ class Consulta(models.Model):
     ocr_pdf = models.TextField(null=True, blank=True)
     analise_exames = models.JSONField(null=True, blank=True)
     resumo = models.TextField(null=True, blank=True)
-    
+        
     def __str__(self):
         return self.cliente.nome
 

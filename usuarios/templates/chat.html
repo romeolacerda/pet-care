@@ -71,7 +71,7 @@
             <textarea id="pergunta" rows="1" placeholder="Pergunte sobre {{ cliente.nome_animal|default:'o paciente' }}, peca um resumo ou gere um laudo…" oninput="autosize(this); toggleSend()" onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault();document.getElementById('form-pergunta').requestSubmit();}"></textarea>
             <div class="composer-row">
                 <div></div>
-                <button class="send" id="sendBtn" type="submit" disabled aria-label="Enviar">
+                <button class="send" id="sendBtn" type="submit" aria-label="Enviar">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </button>
             </div>
@@ -83,11 +83,6 @@
 <script>
   const userInitial = "{% if user.is_authenticated %}{{ user.username|slice:':1'|upper }}{% else %}V{% endif %}";
   const streamUrl = "{% url 'stream_resposta' %}";
-  const fontesUrlBase = "{% url 'fontes' 0 %}";
-  function fontesUrl(perguntaId) {
-    return fontesUrlBase.replace("/0/", "/" + perguntaId + "/");
-  }
-
   marked.setOptions({ breaks: true, gfm: true });
 
   function renderMarkdown(el, raw) {
@@ -181,7 +176,7 @@
           </div>
           <div class="bubble markdown"><div class="md-body" id="resposta-${perguntaId}"></div></div>
           <div class="msg-foot">
-            <a class="link" href="${fontesUrl(perguntaId)}">
+            <a class="link" href="/usuarios/perguntas/${perguntaId}/fontes/">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 1 0-7-7l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7L12 19"/></svg>
               Confira as fontes
             </a>
@@ -212,8 +207,11 @@
       const { done, value } = await reader.read();
       if (done) break;
       if (!value) continue;
-
+      
+      console.log(value)
+      
       respostaMd += decoder.decode(value, { stream: true });
+      
       renderMarkdown(respostaElemento, respostaMd);
       scrollMessages();
     }

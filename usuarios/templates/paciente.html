@@ -76,7 +76,7 @@
                     </svg>
                     Realizar triagem
                 </button>
-                <a href="{% url 'chat' %}" class="chat-btn">
+                <a href="{% url 'chat' cliente.id %}" class="chat-btn">
                     <svg viewBox="0 0 24 24"
                          fill="none"
                          stroke="currentColor"
@@ -106,63 +106,65 @@
         </div>
         <div class="timeline" id="timeline">
             
-                {% for consulta in consultas %}
-    <article class="consult">
-        {% if consulta.video %}
-            <video class="consult-video"
-                    controls
-                    preload="metadata"
-                    playsinline
-                    src="{{ consulta.video.url }}">
-                Seu navegador nao suporta reproducao de video.
-            </video>
-        {% endif %}
-        <div class="consult-body">
-            <div class="consult-head">
-                <div>
-                    <h3><a href="{% url 'consulta' consulta.pk %}">Consulta · {{ consulta.data|date:'d/m/Y' }}</a></h3>
-                </div>
-                
-            </div>
-            <p class="consult-notes">
-                {{consulta.observacao}}
-            </p>
-            <div class="exams">
-                <span class="exams-label">
-                    <svg viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.6">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6Z" />
-                        <path d="M14 2v6h6M9 13h6M9 17h6" />
-                    </svg>
-                Exames anexados</span>
-                <a href="{{ consulta.pdf.url }}" target="_blank">
-                    <div class="exam">
-                        <div class="ico">
-                            <svg viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6Z" stroke="currentColor" stroke-width="1.5" fill="none" />
-                                <text x="7" y="17" font-size="6" font-family="monospace" font-weight="700" fill="currentColor">PDF</text>
-                            </svg>
+            {% for consulta in consultas %}
+            <article class="consult">
+                {% if consulta.video %}
+                    <video class="consult-video"
+                            controls
+                            preload="metadata"
+                            playsinline
+                            src="{{ consulta.video.url}}">
+                        Seu navegador nao suporta reproducao de video.
+                    </video>
+                {% endif %}
+                <div class="consult-body">
+                    <div class="consult-head">
+                        <div>
+                            <h3><a href="{% url 'consulta' consulta.id %}">Consulta · {{ consulta.data|date:'d/m/Y' }}</a></h3>
                         </div>
-                        <div class="nm">
-                            {{consulta.pdf.name}}
-                        </div>
-                        <button class="dl" type="button">
+                        
+                    </div>
+                    <p class="consult-notes">
+                        {{consulta.observacao}}
+                    </p>
+                    <div class="exams">
+                        <span class="exams-label">
                             <svg viewBox="0 0 24 24"
                                 fill="none"
                                 stroke="currentColor"
                                 stroke-width="1.6">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6Z" />
+                                <path d="M14 2v6h6M9 13h6M9 17h6" />
                             </svg>
-                        </button>
+                        Exames anexados</span>
+                        <a href="{{ consulta.pdf.url }}" target="_blank">
+                            <div class="exam">
+                                <div class="ico">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6Z" stroke="currentColor" stroke-width="1.5" fill="none" />
+                                        <text x="7" y="17" font-size="6" font-family="monospace" font-weight="700" fill="currentColor">PDF</text>
+                                    </svg>
+                                </div>
+                                <div class="nm">
+                                    {% if consulta.pdf %}
+                                        {{consulta.pdf.name}}
+                                    {% endif %}
+                                </div>
+                                <button class="dl" type="button">
+                                    <svg viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.6">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </a>
                     </div>
-                </a>
-            </div>
-            
-        </div>
-    </article>
-{% endfor %}
+                    
+                </div>
+            </article>
+        {% endfor %}
             
         </div>
     </main>
@@ -190,7 +192,7 @@
                     </svg>
                 </button>
             </header>
-            <form class="modal-body" enctype="multipart/form-data" method="post" action='{% url "paciente" cliente.id %}'>{% csrf_token %}
+            <form class="modal-body" enctype='multipart/form-data' method="post" action="{% url 'paciente' cliente.id %}">
                 {% csrf_token %}
                 <div class="form-section">
                     <h3>01 · Informacoes da consulta</h3>
@@ -288,8 +290,7 @@
                 
             </div>
             <div>
-                <form method="post" action="{% url 'triagem' cliente.id %}">
-                    {% csrf_token %}
+                <form method="post" action="{% url 'triagem' cliente.id %}">{% csrf_token %}
                 <label style="font-family:var(--mono);
                               font-size:10px;
                               letter-spacing:0.1em;

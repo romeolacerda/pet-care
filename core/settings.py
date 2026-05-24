@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-e=8%xm)54j_geecw*62)xzf1^0xuk&w4%@7!6uh8k1vp$g8o@e'
+SECRET_KEY = 'django-insecure-5_=0*-zk2#hdtk)^av)-j2)_a4q=v9f!fp3#kc-im0j1--#0hk'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'usuarios',
-    'django-q'
+    'django_q'
 ]
 
 MIDDLEWARE = [
@@ -104,10 +104,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
+LANGUAGE_CODE = 'pt-BR'
 
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
 
@@ -120,10 +119,7 @@ USE_TZ = True
 import os
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'templates/static'),
-    os.path.join(BASE_DIR, 'usuarios/templates/static'),
-)
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'templates/static'),)
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

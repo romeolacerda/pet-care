@@ -20,6 +20,7 @@ def transcribe_recording(id_consulta):
     return 'Ok'
 
 def ocr_and_markdown_file(id_consulta):
+    print('teste4')
     from docling.document_converter import DocumentConverter
 
     consulta = get_object_or_404(Consulta, id=id_consulta)
@@ -31,33 +32,37 @@ def ocr_and_markdown_file(id_consulta):
 
     consulta.ocr_pdf = texto
     consulta.save()
+    print('teste5')
     return 'Ok'
 
-from .agent import AssistantAgent, SummaryAgent, ExamAnalysisAgent
+from .agent import SummaryAgent, ExamAnalysisAgent, AssistentAgent
 def summary_and_exam_analysis(id_consulta):
     consulta = get_object_or_404(Consulta, id=id_consulta)
+
     summary_agent = SummaryAgent()
     resumo = summary_agent.run(consulta.transcricao)
     consulta.resumo = resumo.summaries
     exam_analysis_agent = ExamAnalysisAgent()
     analise_exames = exam_analysis_agent.run(consulta.ocr_pdf)
+
     consulta.analise_exames = analise_exames.analyses
     consulta.save()
     return 'Ok'
 
 def rag_documentos(id_consulta):
     consulta = get_object_or_404(Consulta, id=id_consulta)
-    AssistantAgent.knowledge.insert(
+
+    AssistentAgent.knowledge.insert(
         name=consulta.video.name,
         text_content=consulta.transcricao,
         metadata={
-            "paciente_id": consulta.cliente.id,
+            'paciente_id': consulta.cliente.id,
             "name": consulta.video.name,
             "tipo": "video",
-        },
+        }
     )
- 
-    AssistantAgent.knowledge.insert(
+
+    AssistentAgent.knowledge.insert(
         name=consulta.pdf.name,
         text_content=consulta.ocr_pdf,
         metadata={
