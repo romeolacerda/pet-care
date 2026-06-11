@@ -1,4 +1,3 @@
-from ast import Load
 from langchain_openai import ChatOpenAI
 from django.conf import settings
 from abc import abstractmethod, ABC
@@ -11,7 +10,6 @@ from agno.agent import Agent
 from agno.models.openai import OpenAIResponses
 from agno.skills import LocalSkills, Skills
 from dotenv import load_dotenv
-from pydantic import BaseModel, Field
 from agno.knowledge.embedder.openai import OpenAIEmbedder
 from agno.knowledge.knowledge import Knowledge
 from agno.vectordb.lancedb import LanceDb
@@ -20,7 +18,6 @@ import httpx
 from agno.tools import tool
 
 
-from django.conf import settings
 from tzlocal import get_localzone_name
 from agno.tools.googlecalendar import GoogleCalendarTools
 import datetime

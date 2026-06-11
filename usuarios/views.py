@@ -1,5 +1,4 @@
 from django.shortcuts import redirect, render
-from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.messages import constants
@@ -16,7 +15,6 @@ from agno.agent import RunOutput
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import Pergunta
-from .agent import TriagemAgent
 from agno.agent import RunOutputEvent, RunEvent
 from typing import Iterator
 from django.http import StreamingHttpResponse
